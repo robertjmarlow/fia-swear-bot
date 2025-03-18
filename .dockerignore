@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.git
+.gitignore
+.nvmrc
+.pnp.*
+.yarn
+db
+dist
+eslint.config.mjs
+logs
+node_modules
+README.md
