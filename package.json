@@ -23,7 +23,7 @@
     "docker"
   ],
   "author": "Rob Marlow",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/robertjmarlow/fia-swear-bot/issues"
   },
