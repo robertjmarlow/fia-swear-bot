@@ -4,13 +4,18 @@ import axios from 'axios';
 import { parse } from 'csv-parse/sync';
 import winston from 'winston';
 import { BadWord } from './obj/bad-word.js';
-// import { UserFines } from './obj/user-fines.js';
-// import { UserFine } from './obj/user-fine.js';
-// import { createClient } from 'redis';
+import { UserFines } from './obj/user-fines.js';
+import { UserFine } from './obj/user-fine.js';
+import { createClient } from 'redis';
 
-// const redisClient = await createClient()
-//   .on('error', err => console.log('Redis Client Error', err))
-//   .connect();
+const redisClient = await createClient({
+  socket: {
+    host: "db",
+    port: 6379
+  }
+})
+.on('error', err => console.log('Redis Client Error', err))
+.connect();
 
 const client = new Client({
   intents: [
@@ -139,32 +144,32 @@ client.on(Events.MessageCreate, async message => {
       // let the user know they've been fined
       const messageStr = `user **${message.author.globalName}** has been fined **€${totalFine.toLocaleString()}** for using the following words: ${badWordsStr}.`;
 
-      // // save to db
-      // const userIdStr = `users:${message.author.id}`;
-      // const userFinesJson = await redisClient.get(userIdStr);
-      // let userFines: UserFines;
-      // if (userFinesJson !== null) {
-      //   // add to the existing collection
-      //   const userFinesArr: UserFine[] = [];
-      //   const userFinesJsonObj = JSON.parse(userFinesJson);
-      //   for (const userFine of userFinesJsonObj.fines) {
-      //     userFinesArr.push(new UserFine(userFine.enforcedAt, userFine.enforcedFine, userFine.badWord));
-      //   }
-      //   userFines = new UserFines(userIdStr, userFinesArr);
-      // } else {
-      //   // create a new collection for the user
-      //   userFines = new UserFines(userIdStr, []);
-      // }
+      // save to db
+      const userIdStr = `users:${message.author.id}`;
+      const userFinesJson = await redisClient.get(userIdStr);
+      let userFines: UserFines;
+      if (userFinesJson !== null) {
+        // add to the existing collection
+        const userFinesArr: UserFine[] = [];
+        const userFinesJsonObj = JSON.parse(userFinesJson);
+        for (const userFine of userFinesJsonObj.fines) {
+          userFinesArr.push(new UserFine(userFine.enforcedAt, userFine.enforcedFine, userFine.badWord));
+        }
+        userFines = new UserFines(userIdStr, userFinesArr);
+      } else {
+        // create a new collection for the user
+        userFines = new UserFines(userIdStr, []);
+      }
 
-      // // commit the fines to db
-      // for (const badWordInMessage of badWordsInMessage) {
-      //   userFines.addFine(new UserFine(new Date(), badWordInMessage.getSeverity() * Number(process.env.badWordMultiplier), badWordInMessage.getText()));
-      // }
-      // await redisClient.set(userIdStr, JSON.stringify(userFines));
+      // commit the fines to db
+      for (const badWordInMessage of badWordsInMessage) {
+        userFines.addFine(new UserFine(new Date(), badWordInMessage.getSeverity() * Number(process.env.badWordMultiplier), badWordInMessage.getText()));
+      }
+      await redisClient.set(userIdStr, JSON.stringify(userFines));
 
-      // logger.info(JSON.stringify(userFines));
+      logger.info(JSON.stringify(userFines));
       logger.info(messageStr);
-      // textChannel.send(messageStr);
+      textChannel.send(messageStr);
     }
   }
 });

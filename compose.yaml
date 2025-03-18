@@ -1,0 +1,21 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: bot.Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_started
+  db:
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./db:/usr/local/etc/redis/db
+    ports:
+      - "6379:6379"
