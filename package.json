@@ -2,6 +2,7 @@
   "name": "fia-swear-bot",
   "version": "1.0.0",
   "description": "Fines users in chat according to FIA rules",
+  "type": "module",
   "main": "dist/js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
