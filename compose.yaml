@@ -17,5 +17,3 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./db:/usr/local/etc/redis/db
-    ports:
-      - "6379:6379"
