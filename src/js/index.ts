@@ -10,8 +10,8 @@ import { createClient } from 'redis';
 
 const redisClient = await createClient({
   socket: {
-    host: "db",
-    port: 6379
+    host: process.env.dbHost,
+    port: parseInt(process.env.dbPort)
   }
 })
 .on('error', err => console.log('Redis Client Error', err))
