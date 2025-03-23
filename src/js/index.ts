@@ -123,6 +123,12 @@ client.on(Events.MessageCreate, async message => {
     const badWordsInMessage: BadWord[] = [];
     const messageWords: string[] = message.content.toLowerCase().match(wordSeparator);
 
+    // match() will return null if no matches are found, e.g. a message is just emojis
+    if (messageWords === null) {
+      logger.info(`No word matches found for message from ${message.author.globalName} in channel "${textChannel.name}".`);
+      return;
+    }
+
     // go through every word in the message looking for bad words
     for (const messageWord of messageWords) {
       const badWord: BadWord = badWords.get(messageWord);
