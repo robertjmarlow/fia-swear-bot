@@ -7,6 +7,8 @@ import { BadWord } from './obj/bad-word.js';
 import { UserFines } from './obj/user-fines.js';
 import { UserFine } from './obj/user-fine.js';
 import { createClient } from 'redis';
+import WordSearch from './word-search.js';
+import { TrieWordSearch } from './trie-word-search.js';
 
 const redisClient = await createClient({
   socket: {
@@ -17,7 +19,7 @@ const redisClient = await createClient({
 .on('error', err => console.log('Redis Client Error', err))
 .connect();
 
-const client = new Client({
+const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -40,8 +42,6 @@ const logger = winston.createLogger({
     }),
   ]
 });
-
-const wordSeparator = /\b(\w+)\b/g;
 
 async function getBadWords(): Promise<Map<string, BadWord>> {
   const badWords: Map<string, BadWord> = new Map();
@@ -85,14 +85,15 @@ async function getBadWords(): Promise<Map<string, BadWord>> {
   return badWords;
 }
 
-const badWords = await getBadWords();
+const badWords: Map<string, BadWord> = await getBadWords();
+const wordSearch: WordSearch = new TrieWordSearch(badWords);
 
 // TODO put all these event handlers in their own files / directory?
-client.once(Events.ClientReady, readyClient => {
+discordClient.once(Events.ClientReady, readyClient => {
   logger.info(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-client.on(Events.MessageCreate, async message => {
+discordClient.on(Events.MessageCreate, async message => {
   // ignore bot-generated message
   // it'll probably end up in end endless loop otherwise
   if (message.author.bot) {
@@ -102,12 +103,12 @@ client.on(Events.MessageCreate, async message => {
 
   // ignore anything that's not from a text channel
   // not necessary to do anything else with the message
-  if (!(client.channels.cache.get(message.channelId) instanceof TextChannel)) {
+  if (!(discordClient.channels.cache.get(message.channelId) instanceof TextChannel)) {
     logger.info("Ignoring message from non-text channel.");
     return;
   }
 
-  const textChannel = client.channels.cache.get(message.channelId) as TextChannel;
+  const textChannel = discordClient.channels.cache.get(message.channelId) as TextChannel;
 
   // ignore "empty messages", e.g. from image replies
   // not necessary to do anything else with the message
@@ -120,23 +121,7 @@ client.on(Events.MessageCreate, async message => {
   if (message.channelId === "1331279251797970995") {
     logger.info(`user ${message.author.globalName} said "${message.content}" in channel "${textChannel.name}".`);
 
-    const badWordsInMessage: BadWord[] = [];
-    const messageWords: string[] = message.content.toLowerCase().match(wordSeparator);
-
-    // match() will return null if no matches are found, e.g. a message is just emojis
-    if (messageWords === null) {
-      logger.info(`No word matches found for message from ${message.author.globalName} in channel "${textChannel.name}".`);
-      return;
-    }
-
-    // go through every word in the message looking for bad words
-    for (const messageWord of messageWords) {
-      const badWord: BadWord = badWords.get(messageWord);
-
-      if (badWord !== undefined) {
-        badWordsInMessage.push(badWord);
-      }
-    }
+    const badWordsInMessage: BadWord[] = wordSearch.search(message.content);
 
     // did the message have a bad word?
     if (badWordsInMessage.length > 0) {
@@ -180,7 +165,7 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
-client.on(Events.InteractionCreate, async interaction => {
+discordClient.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   logger.info(`user ${interaction.user.globalName} used "/${interaction.commandName}" in channel [${interaction.channelId}].`);
@@ -204,4 +189,4 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
-client.login(process.env.token);
+// client.login(process.env.token);

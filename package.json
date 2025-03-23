@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/js/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint",
     "deploy-commands": "node src/js/deploy-commands.js",
     "build": "tsc --build",
@@ -36,13 +36,17 @@
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "redis": "^4.7.0",
+    "trie-search": "^2.2.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.13.9",
     "eslint": "^9.21.0",
-    "typescript": "^5.7.3",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.0",
+    "typescript": "^5.8.2",
     "typescript-eslint": "^8.25.0"
   }
 }
