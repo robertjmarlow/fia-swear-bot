@@ -17,7 +17,7 @@ const redisClient = await createClient({
 .on('error', err => console.log('Redis Client Error', err))
 .connect();
 
-const client = new Client({
+const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -88,11 +88,11 @@ async function getBadWords(): Promise<Map<string, BadWord>> {
 const badWords = await getBadWords();
 
 // TODO put all these event handlers in their own files / directory?
-client.once(Events.ClientReady, readyClient => {
+discordClient.once(Events.ClientReady, readyClient => {
   logger.info(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-client.on(Events.MessageCreate, async message => {
+discordClient.on(Events.MessageCreate, async message => {
   // ignore bot-generated message
   // it'll probably end up in end endless loop otherwise
   if (message.author.bot) {
@@ -102,12 +102,12 @@ client.on(Events.MessageCreate, async message => {
 
   // ignore anything that's not from a text channel
   // not necessary to do anything else with the message
-  if (!(client.channels.cache.get(message.channelId) instanceof TextChannel)) {
+  if (!(discordClient.channels.cache.get(message.channelId) instanceof TextChannel)) {
     logger.info("Ignoring message from non-text channel.");
     return;
   }
 
-  const textChannel = client.channels.cache.get(message.channelId) as TextChannel;
+  const textChannel = discordClient.channels.cache.get(message.channelId) as TextChannel;
 
   // ignore "empty messages", e.g. from image replies
   // not necessary to do anything else with the message
@@ -180,7 +180,7 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
-client.on(Events.InteractionCreate, async interaction => {
+discordClient.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   logger.info(`user ${interaction.user.globalName} used "/${interaction.commandName}" in channel [${interaction.channelId}].`);
@@ -204,4 +204,4 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
-client.login(process.env.token);
+// discordClient.login(process.env.token);
