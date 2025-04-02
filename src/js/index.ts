@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, MessageFlags, TextChannel } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, MessageFlags, TextChannel } from 'discord.js';
 import 'dotenv/config';
 import axios from 'axios';
 import { parse } from 'csv-parse/sync';
@@ -7,6 +7,7 @@ import { BadWord } from './obj/bad-word.js';
 import { UserFines } from './obj/user-fines.js';
 import { UserFine } from './obj/user-fine.js';
 import { createClient } from 'redis';
+import * as leaderboard from './commands/utility/leaderboard.js';
 
 const redisClient = await createClient({
   socket: {
@@ -42,6 +43,14 @@ const logger = winston.createLogger({
 });
 
 const wordSeparator = /\b(\w+)\b/g;
+
+function getCommands() {
+  const commands = new Collection();
+
+  commands.set(leaderboard.data.name, leaderboard);
+
+  return commands;
+}
 
 async function getBadWords(): Promise<Map<string, BadWord>> {
   const badWords: Map<string, BadWord> = new Map();
@@ -85,6 +94,7 @@ async function getBadWords(): Promise<Map<string, BadWord>> {
   return badWords;
 }
 
+client.commands = getCommands();
 const badWords = await getBadWords();
 
 // TODO put all these event handlers in their own files / directory?
