@@ -1,13 +1,12 @@
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags, TextChannel } from 'discord.js';
 import 'dotenv/config';
-import axios from 'axios';
-import { parse } from 'csv-parse/sync';
 import winston from 'winston';
 import { BadWord } from './obj/bad-word.js';
 import { UserFines } from './obj/user-fines.js';
 import { UserFine } from './obj/user-fine.js';
 import { createClient } from 'redis';
 import * as leaderboard from './commands/utility/leaderboard.js';
+import { BadWordsCache } from './bad-words-cache.js';
 
 const redisClient = await createClient({
   socket: {
@@ -42,8 +41,6 @@ const logger = winston.createLogger({
   ]
 });
 
-const wordSeparator = /\b(\w+)\b/g;
-
 function getCommands() {
   const commands = new Collection();
 
@@ -52,50 +49,9 @@ function getCommands() {
   return commands;
 }
 
-async function getBadWords(): Promise<Map<string, BadWord>> {
-  const badWords: Map<string, BadWord> = new Map();
-
-  try {
-    logger.info(`Getting bad words from "${process.env.badWordList}".`);
-
-    // get the bad word list csv
-    const profanityCsvResponse = await axios.get(process.env.badWordList);
-    if (profanityCsvResponse.status === 200) {
-      const profanityCsv: string = profanityCsvResponse.data;
-
-      logger.info(`Read [${profanityCsv.length}] characters of bad words csv.`);
-
-      // turn the csv into an array of records
-      const profanityRecords: any[] = parse(profanityCsv, {
-        columns: true
-      });
-
-      logger.info(`Read [${profanityRecords.length}] bad words records.`);
-
-      // turn the array of records into an array of BadWords
-      for (let badWordIdx = 0; badWordIdx < profanityRecords.length; badWordIdx++) {
-        const badWord: BadWord = BadWord.BadWordFactory(profanityRecords[badWordIdx]);
-
-        if (badWord !== undefined) {
-          badWords.set(badWord.getText(), badWord);
-        } else {
-          logger.warn(`I had a problem reading ${profanityRecords[badWordIdx]}.`);
-        }
-      }
-
-      logger.info(`Added ${badWords.size} bad words.`);
-    } else {
-      logger.error(`Got a ${profanityCsvResponse.status} when reading bad words csv.`);
-    }
-  } catch (error) {
-    logger.error(error);
-  }
-
-  return badWords;
-}
-
 discordClient.commands = getCommands();
-const badWords = await getBadWords();
+const wordSeparator = /\b(\w+)\b/g;
+const badWords = await BadWordsCache.getBadWords();
 
 // TODO put all these event handlers in their own files / directory?
 discordClient.once(Events.ClientReady, readyClient => {
