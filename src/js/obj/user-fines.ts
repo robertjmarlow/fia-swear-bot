@@ -30,6 +30,10 @@ export class UserFines {
     this.fines.push(fine);
   }
 
+  public getUserId(): string {
+    return this.userId;
+  }
+
   public toString(): string {
     return `userId:${this.userId} fines:[${this.fines}]`;
   }
