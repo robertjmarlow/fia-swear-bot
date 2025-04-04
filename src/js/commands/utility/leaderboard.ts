@@ -26,7 +26,10 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   const channelName = allowedChannels.get(interaction.channelId);
   if (channelName != undefined) {
+    // totally prod ready--get all keys
     const userKeys: string[] = await redisClient.keys('users:*');
+
+    // all fines for users in the guild
     const guildFines: UserFines[] = [];
 
     for (const userKey of userKeys) {
@@ -34,9 +37,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       if (userFinesJson !== null) {
         const userFinesArr: UserFine[] = [];
         const userFinesJsonObj = JSON.parse(userFinesJson);
+
+        // convert each user fine json object into an actual UserFine object
+        // there has to be a better way to do this
         for (const userFine of userFinesJsonObj.fines) {
           userFinesArr.push(new UserFine(userFine.enforcedAt, userFine.enforcedFine, userFine.badWord));
         }
+
+        // take all the individual UserFine and put them into a UserFines
         const userFines = new UserFines(userKey.substring(6), userFinesArr);
         guildFines.push(userFines);
       }
@@ -44,6 +52,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
     let leaderboard = "";
     const badWords = await BadWordsCache.getBadWords();
+
+    // go through each UserFine for the guild and construct an individual fine line
     for (const userFines of guildFines) {
       const guildMember = await interaction.guild.members.fetch(userFines.getUserId());
 
