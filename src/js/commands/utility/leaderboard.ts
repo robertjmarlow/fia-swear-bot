@@ -48,7 +48,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       const guildMember = await interaction.guild.members.fetch(userFines.getUserId());
 
       if (guildMember !== undefined) {
-        leaderboard += `**${guildMember.displayName}** owes **€${userFines.getTotalFines(badWords)}** from **${userFines.getTotalFineCount()}** violations\n`;
+        leaderboard += `**${guildMember.displayName}** owes **€${userFines.getTotalFines(badWords).toLocaleString()}** from **${userFines.getTotalFineCount()}** violation${userFines.getTotalFineCount() > 1 ? 's' : ''}\n`;
       }
     }
 
