@@ -1,25 +1,16 @@
 import { UserFine } from "./user-fine.js";
-import { BadWord } from './bad-word.js';
 
 export class UserFines {
   private userId: string;
   private fines: UserFine[];
 
+  /**
+   * @param userId The snowflake id of the user.
+   * @param fines All UserFine for this user.
+   */
   constructor(userId: string, fines: UserFine[]) {
     this.userId = userId;
     this.fines = fines;
-  }
-
-  public getTotalFines(badwords: Map<string, BadWord> ): number {
-    return this.fines.reduce((totalFine, nextFine) => {
-      const badword: BadWord = badwords.get(nextFine.getBadWord());
-
-      if (badword !== undefined) {
-        totalFine += badword.getSeverity() * Number(process.env.badWordMultiplier);
-      }
-
-      return totalFine;
-    }, 0);
   }
 
   public getTotalFineCount(): number {

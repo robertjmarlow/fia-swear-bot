@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { createClient } from 'redis';
 import 'dotenv/config';
 import { UserFine } from '../../obj/user-fine.js';
-import { UserFines } from '../../obj/user-fines.js';
 import { BadWordsCache } from '../../bad-words-cache.js';
+import { UserFinesWithTotals } from '../../obj/user-fines-with-total.js';
 
 const redisClient = await createClient({
   socket: {
@@ -26,11 +26,14 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   const channelName = allowedChannels.get(interaction.channelId);
   if (channelName != undefined) {
+    // grab the list of bad words to calculate total fines
+    const badWords = await BadWordsCache.getBadWords();
+
     // totally prod ready--get all keys
     const userKeys: string[] = await redisClient.keys('users:*');
 
     // all fines for users in the guild
-    const guildFines: UserFines[] = [];
+    const guildFines: UserFinesWithTotals[] = [];
 
     for (const userKey of userKeys) {
       const userFinesJson = await redisClient.get(userKey);
@@ -45,20 +48,29 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         }
 
         // take all the individual UserFine and put them into a UserFines
-        const userFines = new UserFines(userKey.substring(6), userFinesArr);
+        const userFines = new UserFinesWithTotals(userKey.substring(6), userFinesArr, badWords);
         guildFines.push(userFines);
       }
     }
 
+    // sort by "largest total fine descending"
+    guildFines.sort((a, b) => {
+      if (a.getTotalFines() > b.getTotalFines()) {
+        return -1;
+      } else if (a.getTotalFines() < b.getTotalFines()) {
+        return 1;
+      }
+      return 0;
+    });
+
     let leaderboard = "";
-    const badWords = await BadWordsCache.getBadWords();
 
     // go through each UserFine for the guild and construct an individual fine line
     for (const userFines of guildFines) {
       const guildMember = await interaction.guild.members.fetch(userFines.getUserId());
 
       if (guildMember !== undefined) {
-        leaderboard += `**${guildMember.displayName}** owes **€${userFines.getTotalFines(badWords).toLocaleString()}** from **${userFines.getTotalFineCount()}** violation${userFines.getTotalFineCount() > 1 ? 's' : ''}\n`;
+        leaderboard += `**${guildMember.displayName}** owes **€${userFines.getTotalFines().toLocaleString()}** from **${userFines.getTotalFineCount()}** violation${userFines.getTotalFineCount() > 1 ? 's' : ''}\n`;
       }
     }
 
