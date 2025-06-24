@@ -139,7 +139,6 @@ discordClient.on(Events.MessageCreate, async message => {
       }
       await redisClient.set(userIdStr, JSON.stringify(userFines));
 
-      logger.info(JSON.stringify(userFines));
       logger.info(messageStr);
       textChannel.send(messageStr);
     }
