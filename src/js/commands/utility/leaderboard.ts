@@ -26,6 +26,12 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   const channelName = allowedChannels.get(interaction.channelId);
   if (channelName != undefined) {
+    // the first call sometimes takes more than 3s.
+    // discord fails the call if it takes more than 3s.
+    // deferReply magically gives you 15m to respond.
+    // isn't that neat?
+    await interaction.deferReply();
+
     // grab the list of bad words to calculate total fines
     const badWords = await BadWordsCache.getBadWords();
 
@@ -74,6 +80,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       }
     }
 
-    await interaction.reply(leaderboard);
+    await interaction.editReply(leaderboard);
   }
 }
