@@ -593,14 +593,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.8.3":
-  version: 1.8.4
-  resolution: "axios@npm:1.8.4"
+"axios@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "axios@npm:1.10.0"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/450993c2ba975ffccaf0d480b68839a3b2435a5469a71fa2fb0b8a55cdb2c2ae47e609360b9c1e2b2534b73dfd69e2733a1cf9f8215bee0bcd729b72f801b0ce
+  checksum: 10c0/2239cb269cc789eac22f5d1aabd58e1a83f8f364c92c2caa97b6f5cbb4ab2903d2e557d9dc670b5813e9bcdebfb149e783fb8ab3e45098635cd2f559b06bd5d8
   languageName: node
   linkType: hard
 
@@ -802,9 +802,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"discord.js@npm:^14.20.0":
-  version: 14.20.0
-  resolution: "discord.js@npm:14.20.0"
+"discord.js@npm:^14.21.0":
+  version: 14.21.0
+  resolution: "discord.js@npm:14.21.0"
   dependencies:
     "@discordjs/builders": "npm:^1.11.2"
     "@discordjs/collection": "npm:1.5.3"
@@ -819,14 +819,14 @@ __metadata:
     magic-bytes.js: "npm:^1.10.0"
     tslib: "npm:^2.6.3"
     undici: "npm:6.21.3"
-  checksum: 10c0/78c847f5cc86579a881be73d9d7642aee0ece6c17157dbc13efbd89c5e42ed82fabb4468a55afb723a7e269104929dd57da2d40846fb0d8159ceff986f7baffe
+  checksum: 10c0/35d89b66ec427ecc972f9141540774af6c6a5bf177bdbb5c948efbf838ec074204fb4610227f0f8405336d66706ba17f7280aedf00cccd858ef5c1048d861b34
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.4.7":
-  version: 16.5.0
-  resolution: "dotenv@npm:16.5.0"
-  checksum: 10c0/5bc94c919fbd955bf0ba44d33922a1e93d1078e64a1db5c30faeded1d996e7a83c55332cb8ea4fae5a9ca4d0be44cbceb95c5811e70f9f095298df09d1997dd9
+"dotenv@npm:^17.2.0":
+  version: 17.2.0
+  resolution: "dotenv@npm:17.2.0"
+  checksum: 10c0/d4cb5c2a09c288c921ef47a78f51c765a763266e23e84465cde6a87b28b9f7fc5a9d1fe349ed3c880b4c7297f82dd736dba5b08fe95ce53833ce4a7258d0fc43
   languageName: node
   linkType: hard
 
@@ -1084,11 +1084,12 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.21.0"
     "@types/node": "npm:^22.13.9"
-    axios: "npm:^1.8.3"
+    axios: "npm:^1.10.0"
     csv-parse: "npm:^5.6.0"
-    discord.js: "npm:^14.20.0"
-    dotenv: "npm:^16.4.7"
+    discord.js: "npm:^14.21.0"
+    dotenv: "npm:^17.2.0"
     eslint: "npm:^9.21.0"
+    mnemonist: "npm:^0.40.3"
     redis: "npm:^4.7.0"
     typescript: "npm:^5.7.3"
     typescript-eslint: "npm:^8.25.0"
@@ -1592,6 +1593,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mnemonist@npm:^0.40.3":
+  version: 0.40.3
+  resolution: "mnemonist@npm:0.40.3"
+  dependencies:
+    obliterator: "npm:^2.0.4"
+  checksum: 10c0/8c061d692dc4c45b04045e710e696f94ce6ea819769ed378636523e021ae2bb397945513e9265757b6f2fd29713b7315bc6bb74452df5508fc270bf49f1d1636
+  languageName: node
+  linkType: hard
+
 "ms@npm:^2.1.1, ms@npm:^2.1.3":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
@@ -1603,6 +1613,13 @@ __metadata:
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
   checksum: 10c0/f5f9a7974bfb28a91afafa254b197f0f22c684d4a1731763dda960d2c8e375b36c7d690e0d9dc8fba774c537af14a7e979129bca23d88d052fbeb9466955e447
+  languageName: node
+  linkType: hard
+
+"obliterator@npm:^2.0.4":
+  version: 2.0.5
+  resolution: "obliterator@npm:2.0.5"
+  checksum: 10c0/36e67d88271c51aa6412a7d449d6c60ae6387176f94dbc557eea67456bf6ccedbcbcecdb1e56438aa4f4694f68f531b3bf2be87b019e2f69961b144bec124e70
   languageName: node
   linkType: hard
 

@@ -7,6 +7,7 @@ import { UserFine } from './obj/user-fine.js';
 import { createClient } from 'redis';
 import * as leaderboard from './commands/utility/leaderboard.js';
 import { BadWordsCache } from './bad-words-cache.js';
+import { MultiSet } from 'mnemonist';
 
 const redisClient = await createClient({
   socket: {
@@ -86,7 +87,7 @@ discordClient.on(Events.MessageCreate, async message => {
   if (message.channelId === "1331279251797970995") {
     logger.info(`user ${message.author.globalName} said "${message.content}" in channel "${textChannel.name}".`);
 
-    const badWordsInMessage: BadWord[] = [];
+    const badWordsInMessage: MultiSet<BadWord> = new MultiSet<BadWord>();
     const messageWords: string[] = message.content.toLowerCase().match(wordSeparator);
 
     // match() will return null if no matches are found, e.g. a message is just emojis
@@ -100,21 +101,33 @@ discordClient.on(Events.MessageCreate, async message => {
       const badWord: BadWord = badWords.get(messageWord);
 
       if (badWord !== undefined) {
-        badWordsInMessage.push(badWord);
+        badWordsInMessage.add(badWord);
       }
     }
 
     // did the message have a bad word?
-    if (badWordsInMessage.length > 0) {
+    if (badWordsInMessage.size > 0) {
       // construct a user-readable list of bad words
-      const badWordsStr = badWordsInMessage.map((badWordInMessage) => `"${badWordInMessage.getText()}"`).join(", ");
-      logger.info(`user ${message.author.globalName} said ${badWordsInMessage.length} bad word(s) in channel "${textChannel.name}": [${badWordsStr}].`);
+      // also construct a fine
+      const badWordGroups: string[] = [];
+      let totalFine = 0;
 
-      // construct a fine
-      const totalFine: number = badWordsInMessage.reduce((totalFine, nextBadWord) => totalFine + (nextBadWord.getSeverity() * Number(process.env.badWordMultiplier)), 0)
+      badWordsInMessage.forEachMultiplicity((count, key) => {
+        let badWordGroup = key.getText();
+
+        if (count > 1) {
+          badWordGroup += ` (**x${count}**)`;
+        }
+
+        badWordGroups.push(badWordGroup);
+
+        totalFine += key.getSeverity() * Number(process.env.badWordMultiplier) * count;
+      });
+
+      logger.info(`user ${message.author.globalName} said ${badWordsInMessage.size} bad word(s) in channel "${textChannel.name}": [${badWordGroups.join(", ")}].`);
 
       // let the user know they've been fined
-      const messageStr = `user **${message.author.globalName}** has been fined **€${totalFine.toLocaleString()}** for using the following words: ${badWordsStr}.`;
+      const messageStr = `user **${message.author.globalName}** has been fined **€${totalFine.toLocaleString()}** for using the following words: ${badWordGroups.join(", ")}.`;
 
       // save to db
       const userIdStr = `users:${message.author.id}`;
