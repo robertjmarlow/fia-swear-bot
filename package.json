@@ -31,7 +31,6 @@
   "homepage": "https://github.com/robertjmarlow/fia-swear-bot#readme",
   "packageManager": "yarn@4.9.2",
   "dependencies": {
-    "axios": "^1.10.0",
     "csv-parse": "^5.6.0",
     "discord.js": "^14.21.0",
     "dotenv": "^17.2.0",

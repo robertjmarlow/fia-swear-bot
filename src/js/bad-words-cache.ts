@@ -1,7 +1,6 @@
 import { BadWord } from './obj/bad-word.js';
 import winston from 'winston';
 import { parse } from 'csv-parse/sync';
-import axios from 'axios';
 
 const logger = winston.createLogger({
   level: 'info',
@@ -29,9 +28,9 @@ export class BadWordsCache {
         logger.info(`Getting bad words from "${process.env.badWordList}".`);
 
         // get the bad word list csv
-        const profanityCsvResponse = await axios.get(process.env.badWordList);
+        const profanityCsvResponse = await fetch(process.env.badWordList);
         if (profanityCsvResponse.status === 200) {
-          const profanityCsv: string = profanityCsvResponse.data;
+          const profanityCsv: string = await profanityCsvResponse.text();
 
           logger.info(`Read [${profanityCsv.length}] characters of bad words csv.`);
 
