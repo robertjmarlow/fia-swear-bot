@@ -79,20 +79,20 @@ discordClient.on(Events.MessageCreate, async message => {
   // ignore "empty messages", e.g. from image replies
   // not necessary to do anything else with the message
   if (message.content.trim().length === 0) {
-    logger.info(`Ignoring empty message from user ${message.author.globalName} in channel "${textChannel.name}".`);
+    logger.info(`Ignoring empty message from user ${message.author.displayName} in channel "${textChannel.name}".`);
     return;
   }
 
   // swear bot only in zoomy zooms
   if (message.channelId === "1331279251797970995") {
-    logger.info(`user ${message.author.globalName} said "${message.content}" in channel "${textChannel.name}".`);
+    logger.info(`user ${message.author.displayName} said "${message.content}" in channel "${textChannel.name}".`);
 
     const badWordsInMessage: MultiSet<BadWord> = new MultiSet<BadWord>();
     const messageWords: string[] = message.content.toLowerCase().match(wordSeparator);
 
     // match() will return null if no matches are found, e.g. a message is just emojis
     if (messageWords === null) {
-      logger.info(`No word matches found for message from ${message.author.globalName} in channel "${textChannel.name}".`);
+      logger.info(`No word matches found for message from ${message.author.displayName} in channel "${textChannel.name}".`);
       return;
     }
 
@@ -124,10 +124,10 @@ discordClient.on(Events.MessageCreate, async message => {
         totalFine += key.getSeverity() * Number(process.env.badWordMultiplier) * count;
       });
 
-      logger.info(`user ${message.author.globalName} said ${badWordsInMessage.size} bad word(s) in channel "${textChannel.name}": [${badWordGroups.join(", ")}].`);
+      logger.info(`user ${message.author.displayName} said ${badWordsInMessage.size} bad word(s) in channel "${textChannel.name}": [${badWordGroups.join(", ")}].`);
 
       // let the user know they've been fined
-      const messageStr = `user **${message.author.globalName}** has been fined **€${totalFine.toLocaleString()}** for using the following words: ${badWordGroups.join(", ")}.`;
+      const messageStr = `user **${message.author.displayName}** has been fined **€${totalFine.toLocaleString()}** for using the following words: ${badWordGroups.join(", ")}.`;
 
       // save to db
       const userIdStr = `users:${message.author.id}`;
@@ -161,7 +161,7 @@ discordClient.on(Events.MessageCreate, async message => {
 discordClient.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  logger.info(`user ${interaction.user.globalName} used "/${interaction.commandName}" in channel [${interaction.channelId}].`);
+  logger.info(`user ${interaction.user.displayName} used "/${interaction.commandName}" in channel [${interaction.channelId}].`);
 
   const command = interaction.client.commands.get(interaction.commandName);
 
