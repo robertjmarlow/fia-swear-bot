@@ -744,9 +744,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"discord.js@npm:^14.25.0":
-  version: 14.25.0
-  resolution: "discord.js@npm:14.25.0"
+"discord.js@npm:^14.25.1":
+  version: 14.25.1
+  resolution: "discord.js@npm:14.25.1"
   dependencies:
     "@discordjs/builders": "npm:^1.13.0"
     "@discordjs/collection": "npm:1.5.3"
@@ -761,7 +761,7 @@ __metadata:
     magic-bytes.js: "npm:^1.10.0"
     tslib: "npm:^2.6.3"
     undici: "npm:6.21.3"
-  checksum: 10c0/46941d0ec2dda4f25e713b1384839e8aedebcca7db50f324d43e90743f7168a91093a14aad583149971d5ec2bf0d4ca8955c7a287a5ee6272f2d2bb0b57a18bd
+  checksum: 10c0/7510525accc75b192ddda8804a052d6a51c5357935ce9c6b5051615f96390e269a3b3d9ec50fae91ec08ff218fc03013e3d74e7149fab575ff7b321f446ab442
   languageName: node
   linkType: hard
 
@@ -959,7 +959,7 @@ __metadata:
     "@eslint/js": "npm:^9.39.1"
     "@types/node": "npm:^24.10.1"
     csv-parse: "npm:^5.6.0"
-    discord.js: "npm:^14.25.0"
+    discord.js: "npm:^14.25.1"
     dotenv: "npm:^17.2.3"
     eslint: "npm:^9.39.1"
     mnemonist: "npm:^0.40.3"
@@ -1225,9 +1225,9 @@ __metadata:
   linkType: hard
 
 "lodash@npm:^4.17.21":
-  version: 4.17.21
-  resolution: "lodash@npm:4.17.21"
-  checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
+  version: 4.17.23
+  resolution: "lodash@npm:4.17.23"
+  checksum: 10c0/1264a90469f5bb95d4739c43eb6277d15b6d9e186df4ac68c3620443160fc669e2f14c11e7d8b2ccf078b81d06147c01a8ccced9aab9f9f63d50dcf8cace6bf6
   languageName: node
   linkType: hard
 
