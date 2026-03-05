@@ -131,7 +131,7 @@ discordClient.on(Events.MessageCreate, async message => {
 
       // save to db
       const userIdStr = `users:${message.author.id}`;
-      const userFinesJson = await redisClient.get(userIdStr);
+      const userFinesJson = await redisClient.get(userIdStr) as string;
       let userFines: UserFines;
       if (userFinesJson !== null) {
         // add to the existing collection

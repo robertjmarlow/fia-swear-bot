@@ -36,13 +36,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const badWords = await BadWordsCache.getBadWords();
 
     // totally prod ready--get all keys
-    const userKeys: string[] = await redisClient.keys('users:*');
+    const userKeys: string[] = await redisClient.keys('users:*') as string[];
 
     // all fines for users in the guild
     const guildFines: UserFinesWithTotals[] = [];
 
     for (const userKey of userKeys) {
-      const userFinesJson = await redisClient.get(userKey);
+      const userFinesJson = await redisClient.get(userKey) as string;
       if (userFinesJson !== null) {
         const userFinesArr: UserFine[] = [];
         const userFinesJsonObj = JSON.parse(userFinesJson);
