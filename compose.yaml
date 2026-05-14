@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: bot.Dockerfile
+    image: robertjmarlow/fia-swear-bot-bot
     env_file:
       - .env
     volumes:
@@ -14,6 +15,7 @@ services:
     build:
       context: .
       dockerfile: db.Dockerfile
+    image: robertjmarlow/fia-swear-bot-db
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./db:/usr/local/etc/redis/db
