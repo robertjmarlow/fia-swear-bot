@@ -11,6 +11,10 @@ RUN yarn build
 
 # run
 FROM node:26-alpine
+
+RUN apk update \
+    && apk upgrade
+
 WORKDIR /app
 COPY --from=build-stage /build/node_modules ./node_modules
 COPY --from=build-stage /build/dist ./dist
